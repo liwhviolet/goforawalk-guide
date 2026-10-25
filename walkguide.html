@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exhibition Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Caveat:wght@500&family=Literata:opsz,wght@7..72,400;7..72,500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow column like a pocket field guide. The park map is the home page; each work page holds hand-drawn ways here and visitor notes on slips of paper */
+:root{
+  --bg:#eef0ea; --paper:#f8f9f5; --fg:#1d2420; --muted:#5d6a61; --line:#c9d0c6;
+  --accent:#2f5d4a; --accent-soft:#dde7df; --sample:#8a6d2f;
+  --lawn:#dde7d5; --path:#f4f2ea; --pathedge:#cdd6c7; --water:#c3d6d8; --tree:#a8bf9e; --tree2:#93ad8a;
+  --f-display:"Young Serif", Georgia, serif;
+  --f-body:"Literata", Georgia, serif;
+  --f-label:"IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#161b18; --paper:#1e2420; --fg:#e4e9e3; --muted:#9aa79e; --line:#344039;
+  --accent:#8cc0a6; --accent-soft:#25332c; --sample:#d4b46e;
+  --lawn:#213021; --path:#3a4238; --pathedge:#2a352a; --water:#2a4347; --tree:#31472d; --tree2:#3b5436; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161b18; --paper:#1e2420; --fg:#e4e9e3; --muted:#9aa79e; --line:#344039;
+  --accent:#8cc0a6; --accent-soft:#25332c; --sample:#d4b46e;
+  --lawn:#213021; --path:#3a4238; --pathedge:#2a352a; --water:#2a4347; --tree:#31472d; --tree2:#3b5436; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:560px;margin:0 auto;padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.view{display:flex;flex-direction:column;gap:24px}
+.label{font-family:var(--f-label);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1,h2{font-family:var(--f-display);font-weight:400;text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(32px,8.5vw,44px)}
+h2{font-size:27px}
+p{margin:0}
+.intro{display:flex;flex-direction:column;gap:8px}
+.intro p{color:var(--muted)}
+.note{font-size:14px;color:var(--muted)}
+.tiny{font-family:var(--f-label);font-size:11px;color:var(--sample)}
+
+/* map */
+.map{position:relative}
+.map svg{display:block;width:100%;height:auto}
+.m-lawn{fill:var(--lawn)}
+.m-pathedge{fill:none;stroke:var(--pathedge);stroke-width:9;stroke-linecap:round}
+.m-path{fill:none;stroke:var(--path);stroke-width:5.5;stroke-linecap:round}
+.m-water{fill:var(--water)}
+.m-tree{fill:var(--tree)}.m-tree2{fill:var(--tree2)}
+.m-text{font-family:var(--f-label);font-size:8px;fill:var(--muted);letter-spacing:.12em}
+.m-water-text{font-family:var(--f-display);font-size:11px;fill:var(--muted);font-style:italic}
+.zone{cursor:pointer}
+.zone .halo{fill:var(--accent);fill-opacity:.12;stroke:var(--accent);stroke-opacity:.6;stroke-width:1;stroke-dasharray:2.5 3}
+.zone .dot{fill:var(--paper);stroke:var(--accent);stroke-width:1.4}
+.zone .numt{font-family:var(--f-label);font-size:9.5px;fill:var(--accent);text-anchor:middle;dominant-baseline:central;font-weight:500}
+.zone .name{font-family:var(--f-label);font-size:8.8px;font-weight:500;fill:var(--fg);stroke:var(--lawn);stroke-width:3.5;paint-order:stroke;stroke-linejoin:round;text-anchor:start;dominant-baseline:central}
+.zone .name.l{text-anchor:end}.zone .name.m{text-anchor:middle}
+.zone.going .dot{stroke-dasharray:3 2}
+.zone.seen .dot{fill:var(--accent)}
+.zone.seen .numt{fill:var(--paper)}
+.zone:hover .halo,.zone:focus .halo{fill-opacity:.28}
+.zone:focus{outline:none}
+.zone:focus-visible .dot{stroke-width:3}
+.tip{position:absolute;z-index:2;max-width:230px;background:var(--fg);color:var(--bg);padding:9px 11px;border-radius:3px;font-size:13.5px;line-height:1.45;pointer-events:none}
+.tip .tn{font-style:italic}
+
+/* buttons */
+.btn{font-family:var(--f-label);font-size:13px;letter-spacing:.04em;padding:11px 16px;border-radius:4px;border:1px solid var(--fg);background:transparent;color:var(--fg);cursor:pointer}
+.btn.primary{background:var(--fg);color:var(--bg)}
+.btn.small{padding:7px 12px;font-size:12px}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.back{all:unset;cursor:pointer;font-family:var(--f-label);font-size:12px;color:var(--muted)}
+.back:focus-visible{outline:2px solid var(--accent)}
+.head{display:flex;flex-direction:column;gap:6px}
+.where{font-family:var(--f-label);font-size:12px;color:var(--accent)}
+.tomb{display:flex;flex-direction:column;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.tomb .artist{color:var(--fg)}
+.tomb .tbc{font-style:italic}
+.block{display:flex;flex-direction:column;gap:12px}
+.empty{color:var(--muted);font-style:italic;font-size:15px}
+
+/* hand-drawn ways */
+.sketches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sketch{background:var(--paper);border:1px solid var(--line);padding:6px 6px 8px;display:flex;flex-direction:column;gap:4px}
+.sketch:nth-child(odd){transform:rotate(-.7deg)}.sketch:nth-child(even){transform:rotate(.6deg)}
+.sketch svg{display:block;width:100%;height:auto;color:var(--fg)}
+.sketch .meta{font-family:var(--f-label);font-size:10.5px;color:var(--muted);padding:0 2px}
+.sketch .meta.s{color:var(--sample)}
+.ink{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hand{font-family:"Caveat","Bradley Hand","Segoe Print",cursive;font-size:19px;fill:currentColor;stroke:none}
+.tools{display:flex;flex-wrap:wrap;gap:6px}
+.tool{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-label);font-size:12px;padding:5px 10px 5px 7px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);cursor:pointer}
+.tool svg{width:18px;height:18px;display:block}
+.tool .ink{stroke-width:2.6}
+.tool[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.tool:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* notes */
+.slip{background:var(--paper);border:1px solid var(--line);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.slip p{font-size:15.5px}
+.slip .meta{font-family:var(--f-label);font-size:10.5px;color:var(--muted)}
+.slip .meta.s{color:var(--sample)}
+
+/* leaving traces */
+.panel{border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:16px}
+.pad{display:block;width:100%;max-width:300px;height:auto;background:var(--paper);border:1px dashed var(--muted);touch-action:none;cursor:crosshair;color:var(--fg)}
+textarea{width:100%;box-sizing:border-box;min-height:64px;font-family:var(--f-body);font-size:15.5px;line-height:1.5;padding:10px 12px;border:1px solid var(--line);background:var(--paper);color:var(--fg);border-radius:2px;resize:vertical}
+textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+details{border:1px solid var(--line);padding:10px 12px;background:var(--paper)}
+summary{cursor:pointer;font-family:var(--f-label);font-size:12px;color:var(--muted)}
+details p{margin-top:8px;font-size:15px}
+
+/* questions */
+.q{display:flex;flex-direction:column;gap:8px}
+.q label.ql{font-family:var(--f-display);font-size:19px;line-height:1.3}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips label{font-family:var(--f-label);font-size:12.5px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;cursor:pointer;color:var(--fg)}
+.chips input:checked + label{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.chips input:focus-visible + label{outline:2px solid var(--accent);outline-offset:2px}
+.foot{display:flex;flex-direction:column;gap:10px}
+@media (prefers-reduced-motion:no-preference){.view{animation:in .25s ease-out}@keyframes in{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}}
+
+/* frosted glass layer */
+:root{--glass:rgba(250,251,247,.52);--glass-strong:rgba(250,251,247,.74);--glass-edge:rgba(255,255,255,.7);--glass-shadow:0 6px 24px rgba(40,60,48,.10);
+  --blob1:#c3d9c6;--blob2:#c2d8db;--blob3:#e7dcc2}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--glass:rgba(30,36,32,.5);--glass-strong:rgba(30,36,32,.74);--glass-edge:rgba(255,255,255,.09);--glass-shadow:0 6px 24px rgba(0,0,0,.35);
+  --blob1:#1f3b2c;--blob2:#1b3539;--blob3:#3a3322}}
+:root[data-theme="dark"]{--glass:rgba(30,36,32,.5);--glass-strong:rgba(30,36,32,.74);--glass-edge:rgba(255,255,255,.09);--glass-shadow:0 6px 24px rgba(0,0,0,.35);
+  --blob1:#1f3b2c;--blob2:#1b3539;--blob3:#3a3322}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(circle at 12% 18%,var(--blob1),transparent 42%),radial-gradient(circle at 88% 38%,var(--blob2),transparent 44%),radial-gradient(circle at 35% 92%,var(--blob3),transparent 46%)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{position:relative;z-index:1}
+.slip,.sketch,details,.map,textarea,.pad,.tool,.btn:not(.primary),.bar,.tip{
+  background:var(--glass);border:1px solid var(--glass-edge);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%)}
+.slip,.sketch,details,.map,.bar{box-shadow:var(--glass-shadow)}
+.slip,details{border-radius:12px}
+.sketch{border-radius:10px}
+.map{padding:8px;border-radius:18px}
+textarea,.pad{border-radius:10px}
+.pad{border-style:dashed;border-color:var(--muted)}
+.btn{border-radius:999px}
+.btn:not(.primary){border-color:var(--glass-edge);box-shadow:inset 0 0 0 1px var(--line)}
+.tip{background:var(--glass-strong);color:var(--fg);border-radius:12px;box-shadow:var(--glass-shadow)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;padding:10px 14px;border-radius:999px;align-self:flex-start}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .slip,.sketch,details,.map,textarea,.pad,.tool,.btn:not(.primary),.bar,.tip{background:var(--paper)}}
+@media (prefers-reduced-transparency: reduce){
+  .slip,.sketch,details,.map,textarea,.pad,.tool,.btn:not(.primary),.bar,.tip{background:var(--paper);-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* glass number pins over the map */
+:root{--pin-bg:rgba(250,252,248,.58);--pin-edge:rgba(255,255,255,.6);--pin-hi:rgba(255,255,255,.35);--pin-seen:rgba(47,93,74,.58);--pin-shadow:0 2px 8px rgba(30,50,40,.12)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pin-bg:rgba(230,238,232,.16);--pin-edge:rgba(255,255,255,.18);--pin-hi:rgba(255,255,255,.08);--pin-seen:rgba(140,192,166,.48);--pin-shadow:0 2px 8px rgba(0,0,0,.35)}}
+:root[data-theme="dark"]{--pin-bg:rgba(230,238,232,.16);--pin-edge:rgba(255,255,255,.18);--pin-hi:rgba(255,255,255,.08);--pin-seen:rgba(140,192,166,.48);--pin-shadow:0 2px 8px rgba(0,0,0,.35)}
+.map-inner{position:relative}
+.pin{position:absolute;transform:translate(-50%,-50%);width:32px;height:32px;padding:0;border-radius:50%;
+  display:grid;place-items:center;overflow:hidden;cursor:pointer;
+  font-family:var(--f-label);font-size:13px;font-weight:500;color:var(--accent);
+  background:var(--pin-bg);border:1px solid var(--pin-edge);
+  -webkit-backdrop-filter:blur(14px) saturate(120%);backdrop-filter:blur(14px) saturate(120%);
+  box-shadow:inset 0 0 0 .5px var(--pin-hi),var(--pin-shadow);
+  transition:transform .15s ease}
+
+.pin:hover,.pin:focus-visible{transform:translate(-50%,-50%) scale(1.1)}
+.pin:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pin.going{box-shadow:inset 0 0 0 .5px var(--pin-hi),0 0 0 2px var(--accent-soft),var(--pin-shadow)}
+.pin.seen{background:var(--pin-seen);color:#fff}
+@media (prefers-reduced-motion:reduce){.pin{transition:none}}
+@media (prefers-reduced-transparency: reduce){.pin{background:var(--paper);-webkit-backdrop-filter:none;backdrop-filter:none}.pin.seen{background:var(--accent);color:var(--paper)}}
+details.cap p{margin-top:10px;font-size:15px;line-height:1.6}
+details.cap+details.cap{margin-top:-4px}
+</style>
+
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+const WORKS = [
+  {id:"praxis", artist:"Francis Alÿs", title:"Paradox of Praxis 1 (Sometimes Making Something Leads to Nothing)", short:"Paradox of Praxis 1", year:"1997",
+   medium:"Documentation of an action, single-channel video, colour, sound, 4'59\"", area:"a shaded spot west of the pond, best at dusk",
+   caption:"Throughout his practice, Francis Alÿs has approached anthropological and geopolitical questions with a poetic and imaginative sensibility, working through everyday life in what he describes as ‘a sort of discursive argument composed of episodes, metaphors, or parables’ (Alÿs, cited in David Zwirner, 2013). For nine hours, the artist pushed a large block of ice through the streets of Mexico City until nothing was left but a small puddle of water. This futile labour recalls the daily struggle of many in the city to make a living, and touches on a more general anxiety, the one named in the work’s subtitle, that sometimes making something leads to nothing. Yet if the day is not measured by its result, what actually happened? A body constantly adjusting to steer the ice through crowded streets, the streets themselves, strangers brushed past, a daily routine briefly interrupted and then resumed. These were there all along. Only once the result is taken away do they come into view.", note:"The exhibition opens with Paradox of Praxis 1 because it gives concrete form to an anxiety many visitors already carry, that effort may come to nothing. At a time when the promises of the future are increasingly unfulfilled, the work punctures, with rare honesty, the social illusion that effort is always rewarded. Made in Mexico City in 1997, in the years following the 1994 peso crisis, the action offers no consolation. The ice melts, the labour leaves no product, and no hidden reward waits at the end.\n\nAs the entrance to the exhibition, the work leaves visitors with a plain question, why is it like this? The rest of the exhibition unfolds from there. By removing the result altogether, the work makes visible the logic of measuring action by its outcome, and shows at the same time what that logic leaves out. What remains after nine hours is passing through itself, the body adapting to the street, the people passed along the way, the city carrying on around the action. In this sense, the work already contains the turn the exhibition proposes, from where walking arrives to what it passes through.\n\nBeginning with this work also means beginning from shared experience before entering theory. Alÿs’s action is presented as an everyday scene of labour and movement through a city, one that visitors may recognise from their own working days and plans for the future, before they are invited to look again at the nearby they pass through every day.",
+   notes:["A man pushes a block of ice through a city until there is nothing left. I came the long way round the pond and nearly turned back. I kept thinking about my own walk more than the video.","Short video on a small screen under the trees. Kids were feeding ducks right next to it, which somehow felt right."],
+   ways:[[[20,270],[60,240],[72,180],[140,168],[152,118],[226,108]],[[278,36],[205,58],[192,150],[124,162],[104,232]]]},
+  {id:"walker", artist:"Tsai Ming-liang", title:"Walker (行者)", short:"Walker", year:"2012",
+   medium:"Single-channel digital video, colour, no dialogue, approx. 27 min", area:"the north lawn, open-air screenings in the evening",
+   caption:"The Walker series has been developed by Tsai Ming-liang and the actor Lee Kang-sheng since 2012. In Walker, a barefoot monk in a red robe, holding a pineapple bun, moves through the streets of Hong Kong at a pace close to stillness. The camera remains fixed throughout. Passers-by hurry past him; some stop to look, some take out their phones to photograph him, and most do not notice him at all.", note:"The modern city runs like a cold machine that never stops. Its crowds form a faceless, undifferentiated mass, and its industrial architecture appears harsh and alienating, so that restlessness and calm stand in stark contrast. In the film, the slowness and concentration of walking meditation are placed as a symbol within the public space of the modern city, where they become a powerful contrast and critique.\n\nFollowing Paradox of Praxis 1, Walker reveals the conditions from which this widespread anxiety arises. Tsai’s film places the viewer in a city organised by acceleration. As Rosa argues, technological change, social change and the pace of life drive one another in a continuous acceleration, and people are required to move ever more quickly from one goal to the next. The streets of Hong Kong in Walker are precisely such a space. The city is designed for the efficient flow of people, and the street matters only as a passage to the next destination. Measured against this tempo, any action that does not arrive quickly begins to appear wasted.\n\nYet the monk’s walk also reveals a two-way rupture with the nearby, on the side of the crowd rushing past and on the side of the figure who withdraws into stillness. His slowness separates him from the street, just as the hurrying crowd is separated from him. He meets no one, and few people truly meet him.\n\nThis is the significance of the work at this point in the exhibition. The rupture points to the conditions behind the fear of futility, and at the same time prevents the exhibition from treating slow walking as a remedy. Slowing down alone does not bring the nearby back. What is needed is for walking to return to its exchanges with the people and places around it, and to the present, a question the subsequent works take up.",
+   notes:["I sat on the bench and watched the whole film. The monk walks so slowly that after a while I noticed I was breathing more slowly too. I felt it more than I understood it."],
+   ways:[[[150,285],[150,205],[110,160],[122,84],[204,40]]]},
+  {id:"lost", artist:"Leung Chi Wo + Sara Wong", title:"The Woman Carrying A Basin Over Her Head", short:"The Woman Carrying A Basin Over Her Head", year:"2023",
+   medium:"Single-channel 4K video, colour, sound, 9'10\"", area:"the pavilion by the east gate",
+   caption:"Leung Chi Wo and Sara Wong have worked together since 1992. Commissioned by the Asia Culture Center in Gwangju, South Korea, they took a photograph from the archive of the late photographer Kim Ki-chan as the starting point for a new work. Taken in 1970 in an alley near Seoul Station, the photograph shows four women walking past with basins on their heads. In crowded, narrow lanes, this was how people carried goods (Asia Culture Center, 2023).", note:"The posture is the body’s response to the conditions of the street, and it is the nearby that shapes walking. The video makes this especially clear. When the same posture leaves the alley of that time and is performed again by a body from another era, the street conditions on which it depended come into view, and we are able to see how the nearby writes itself into the body and into walking.\n\nThe relationship also holds in reverse. Walking the same alleys every day with water on their heads, these women linked households, water and street into a shared space of living. Ingold and Vergunst argue that social relations are paced out along the ground (Ingold and Vergunst, 2008, p. 1). Even as walking adapts to the nearby, it also produces the nearby, day after day. The re-enactment carries this two-way relationship into the present. By asking a woman born decades later to walk the path of the photograph again, the artists return the anonymous figures of the archive to concrete bodies and labour, and two walkers meet across generations. This walk comes into contact with another person, and the work itself becomes a walk back towards the nearby.",
+   notes:["It starts from an old photograph of women carrying basins through a narrow alley in Seoul. Watching it, I thought about how much a street decides the way we move.","Nine minutes, quite slow. I kept wondering who these women were and where they were going. Nobody wrote that down in 1970."],
+   ways:[[[28,150],[148,152],[160,100],[262,92]]]},
+  {id:"weckert", artist:"Simon Weckert", title:"Google Maps Hacks", short:"Google Maps Hacks", year:"2020",
+   medium:"Action, video documentation", area:"the north-east path",
+   caption:"Simon Weckert loaded 99 second-hand smartphones, each with location and navigation switched on, into a red handcart and pulled it slowly through the streets of Berlin. The phones simultaneously sent location and movement data to Google Maps. The system identified them as a large number of slow-moving vehicles, so that roads previously shown in green as clear quickly turned red. The map began to display heavy congestion and advised other drivers to take another route, while the street itself was almost empty.", note:"Checking routes and traffic on Google Maps before leaving home has become a habit for many people. Which road to take and which stretch to avoid are decided entirely in the moment of looking at the map. Xiang argues that hypermodern systems, organised around the logic of maximum efficiency, increase the efficiency of human action while also making people more dependent on systems they can neither understand nor control (Xiang, 2025, pp. 90–91, 101).\n\nIn planning our routes by the map, we also accept its judgement of the street. A single misreading on the map leaves traces on the actual street. Drivers take detours, people who would have passed this way no longer do, and whether a street is busy or quiet is increasingly decided by a distant system. As the relations that organise the nearby are lifted out beyond our immediate surroundings (Giddens, 1990, p. 21), we have come to trust the nearby presented by abstract systems and big data more than the streets we actually pass through.",
+   notes:["A cart full of phones next to a screen. I checked my own map afterwards and wondered what it thinks I am doing right now."],
+   ways:[[[20,200],[100,200],[100,100],[200,100],[200,40]],[[262,278],[240,200],[150,180],[140,90]]]},
+  {id:"wind", artist:"Ge Yulu", title:"Wind Blowing to Beijing (吹往北京的风)", short:"Wind Blowing to Beijing", year:"2019",
+   medium:"Action, video and photo documentation, 8 days / 67 hours of walking", area:"the long lawn, south-west",
+   caption:"In 2019, to deliver a letter to his girlfriend in Haidian, Beijing, the artist Ge Yulu undertook a performance that lasted eight days and involved 67 hours of walking. He handwrote a love letter bearing only a salutation (his girlfriend’s name) and a signature (his own), and, relying throughout on an electric fan, a hairdryer and the natural wind, blew the letter from Yanjiao past the checkpoint into Beijing until it finally reached the foot of his girlfriend’s building in Haidian. Along the way, the letter was blown into a rubbish bin, picked up by a kind passer-by and chewed by a stray cat. By the time it reached its destination, it was badly torn and worn.", note:"",
+   notes:["Something about wind and a letter. It was windy today too, which made me laugh."],
+   ways:[[[278,276],[200,248],[182,170],[92,142],[62,60]]]},
+  {id:"crow", artist:"Bangjoo Kim", title:"Belong to No One Else: Dropped by A Crow", short:"Belong to No One Else", year:"2023",
+   medium:"Performance, installation (OSB plywood, casters, text), dimensions variable", area:"south of the pond, spreading along the paths",
+   caption:"Over about four months, Bangjoo Kim walked aimlessly around the neighbourhood near home, allowing objects met by chance along the way to catch the artist’s attention. These objects were brought back to the studio, where the artist spent long periods looking at and touching them, slowly building a relationship with each one.", note:"Before the artist picked it up, it belonged to no one. Through months of living alongside it, something met by chance on a walk became part of the artist’s nearby.",
+   notes:["Small things someone found and kept. On the way I looked at the ground the whole time."],
+   ways:[[[40,40],[62,120],[150,132],[170,220],[250,240]]]},
+  {id:"collector", artist:"Francis Alÿs", title:"The Collector", short:"The Collector", year:"1990-92",
+   medium:"Action; magnetised metal object on wheels; photo and video documentation; object c. 6 × 14 × 4 in (prototype)", area:"the north-west corner",
+   caption:"This was Alÿs’s first walk in the streets of Mexico City. He made a small magnetised dog on wheels and, holding it on a string, took it for a walk through the city every day. Wherever the dog passed, coins, nails, bottle caps and all kinds of metal scraps were drawn to it bit by bit, until it was completely covered by these found objects.", note:"The Collector sets no destination and aims at no product. Each day Alÿs led the magnetised dog through the streets of Mexico City, and it slowly filled with metal scraps that others had left on the pavement. Coins and bottle caps, rarely noticed in everyday passage, were gathered up one by one in the course of this walk. The work does, in the end, present an “outcome” of sorts. It consists entirely of passing through and of walking itself, each piece of metal corresponding to a stretch of road walked and a chance encounter. As the nearby accumulates on the dog along the walk, arriving no longer monopolises the meaning of walking. These scraps are also evidence that the nearby exists. They record unseen exchanges between strangers and the traces of a street shared by many. The walker has no way of knowing who these people were, but through the objects they left behind, it becomes possible to establish that the nearby has been present throughout.",
+   notes:[], ways:[]},
+  {id:"lefkowitz", artist:"Myriam Lefkowitz", title:"Walk, Hands, Eyes (a city)", short:"Walk, Hands, Eyes", year:"2009",
+   medium:"Participatory one-to-one walking performance, approx. 1 hour", area:"meeting point at the south-east corner, one visitor at a time",
+   caption:"A walk for two, in which a “guide” with open eyes leads a “visitor” whose eyes are closed. For about an hour, the guide says nothing and gently steers the visitor through the city using only their hands. Without sight, the ground underfoot, the wind, sound, temperature and the people passing by all enter the body in a different way. At certain moments along the way, the guide asks the visitor to open their eyes briefly. Like pressing a shutter, the scene in front of them is immediately kept in memory. The guide has no route planned in advance and cannot control what will appear along the way.", note:"This work temporarily removes the destination that walking is meant to reach. With eyes closed, the visitor can no longer confirm direction by sight, nor know where they are being led. The unevenness of the ground and the air stirred by people passing have to be received through bodily perception. The guide likewise follows no fixed route and can only compose the walk from what the city offers at that moment. In this way the work responds concretely to one of the exhibition’s questions. When arrival no longer occupies all of our attention, can what is usually overlooked along the way be perceived?\n\nThe walk also makes the visitor aware that every step depends on another person’s actions. Direction is conveyed through a stranger’s hands, and changes in pressure and pace require both people to keep responding to and adjusting to each other. This gives the nearby discussed in the exhibition a concrete location. It exists in the process through which people act together and come to depend on one another.",
+   notes:["You walk with your eyes closed and someone guides you. I did not do it but I watched two people go. They came back laughing."],
+   ways:[[[30,30],[120,60],[140,160],[230,190],[258,258]]]}
+];
+
+/* sample hand-drawn directions: route points, start and end words, landmarks [type, x, y, word] */
+const WAYS = {
+  praxis:[
+    {rich:true, p:[[20,270],[60,240],[72,180],[140,168],[152,118],[226,108]], s:["W gate",34,288,"start"], e:["here",226,134,"middle"],
+     m:[["tree",110,222,"big tree"],["sculpture",190,175,"statue"],["flower",36,150,"roses"]]},
+    {p:[[278,36],[205,58],[192,150],[124,162],[104,232]], s:["N gate",286,22,"end"], e:["here",118,237,"start"],
+     m:[["bench",250,110,"bench"],["lamp",150,110,"lamp"],["tree",60,190,"pine"]]}],
+  walker:[
+    {p:[[150,285],[150,205],[110,160],[122,84],[204,40]], s:["S path",164,290,"start"], e:["screen",204,66,"middle"],
+     m:[["bench",205,232,"bench"],["flower",62,120,"flowers"],["tree",240,120,"plane trees"]]}],
+  lost:[
+    {p:[[28,150],[148,152],[160,100],[262,92]], s:["pond",28,132,"middle"], e:["pavilion",262,118,"middle"],
+     m:[["tree",100,78,"big tree"],["lamp",90,200,"lamp"],["sculpture",210,150,"little statue"]]}],
+  weckert:[
+    {p:[[20,200],[100,200],[100,100],[200,100],[200,40]], s:["café",20,226,"middle"], e:["here",214,45,"start"],
+     m:[["flower",150,150,"roses"],["bench",48,145,"bench"],["lamp",250,150,"lamp"]]},
+    {p:[[262,278],[240,200],[150,180],[140,90]], s:["E gate",262,297,"middle"], e:["here",154,94,"start"],
+     m:[["tree",190,252,"oak"],["sculpture",80,150,"statue"]]}],
+  wind:[
+    {rich:true, p:[[278,276],[200,248],[182,170],[92,142],[62,60]], s:["café",278,297,"middle"], e:["open lawn",76,65,"start"],
+     m:[["tree",120,222,"willow"],["flower",250,190,""],["bench",36,190,"bench"]]}],
+  crow:[
+    {p:[[40,40],[62,120],[150,132],[170,220],[250,240]], s:["N path",54,36,"start"], e:["here",250,266,"middle"],
+     m:[["lamp",130,80,"lamp"],["flower",100,195,"daisies"],["sculpture",240,175,"stone"]]}],
+  lefkowitz:[
+    {p:[[30,30],[120,60],[140,160],[230,190],[258,258]], s:["pond",44,26,"start"], e:["meeting point",292,288,"end"],
+     m:[["bench",200,110,"bench"],["tree",70,150,"big tree"],["flower",180,252,""]]}]
+};
+
+const POS = {praxis:[110,214], walker:[176,76], lost:[326,240], weckert:[290,140], wind:[90,334], crow:[232,318], collector:[62,138], lefkowitz:[290,394]};
+const SIDE = {praxis:"b", walker:"r", lost:"bl", weckert:"l", wind:"b", crow:"b", collector:"r", lefkowitz:"l"};
+
+const QUESTIONS = [
+  {q:"What was on your mind as you walked?"},
+  {q:"Did anything make you stop?"},
+  {q:"Did you choose the works yourself, or follow others?", chips:["My own choice","Others' notes and drawings","A bit of both"]},
+  {q:"How did this way of visiting feel?"}
+];
+
+const blank = () => ({seen:{}, going:{}, mine:{}, draw:{}, answers:["","","",""], choice:""});
+let state = blank();
+try{ const s = JSON.parse(localStorage.getItem("fg-state")||"null"); if(s) state = Object.assign(blank(), s); }catch(e){}
+function save(){ try{ localStorage.setItem("fg-state", JSON.stringify(state)); }catch(e){} }
+
+const app = document.getElementById("app");
+const paras = t => String(t).split(/\n\n/).map(p=>`<p>${esc(p)}</p>`).join("");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* seeded randomness so the map and sample drawings look the same every time */
+function rng(seed){ let s = seed>>>0; return ()=>((s = (s*1664525 + 1013904223)>>>0) / 4294967296); }
+
+/* ---------- map ---------- */
+function trees(){
+  const r = rng(7), clusters = [[150,58,9],[230,62,8],[318,70,6],[34,262,7],[196,410,8],[78,402,6],[300,300,4],[40,64,4]];
+  let out = "";
+  clusters.forEach(([cx,cy,n])=>{ for(let i=0;i<n;i++){
+    const x = cx + (r()-.5)*54, y = cy + (r()-.5)*26, rad = 5 + r()*5;
+    out += `<circle class="${r()>.5?"m-tree":"m-tree2"}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad.toFixed(1)}"/>`;
+  }});
+  return out;
+}
+const PATHS = [
+  "M180 10 C 176 60, 192 100, 180 132 C 168 168, 88 178, 60 240 C 40 292, 72 362, 182 430",
+  "M350 240 C 300 240, 282 212, 252 192 C 222 172, 202 142, 180 132",
+  "M252 192 C 262 252, 242 300, 252 340 C 262 380, 300 402, 348 410",
+  "M12 334 C 82 324, 140 302, 180 302 C 210 302, 230 322, 252 340"
+];
+function zoneLabel(w,x,y){
+  const s = SIDE[w.id], t = esc(w.short);
+  if(s==="r") return `<text class="name" x="${x+28}" y="${y}">${t}</text>`;
+  if(s==="l") return `<text class="name l" x="${x-28}" y="${y}">${t}</text>`;
+  if(s==="bl") return `<text class="name l" x="348" y="${y+32}">${t}</text>`;
+  return `<text class="name m" x="${x}" y="${y+32}">${t}</text>`;
+}
+function parkMap(){
+  const zones = WORKS.map((w,i)=>{
+    const [x,y] = POS[w.id];
+    const cls = state.seen[w.id] ? " seen" : state.going[w.id] ? " going" : "";
+    return `<g class="zone">${zoneLabel(w,x,y)}</g>`;
+  }).join("");
+  const pins = WORKS.map((w,i)=>{
+    const [x,y] = POS[w.id];
+    const cls = state.seen[w.id] ? " seen" : state.going[w.id] ? " going" : "";
+    return `<button class="pin${cls}" data-id="${w.id}" style="left:${(x/360*100).toFixed(2)}%;top:${(y/440*100).toFixed(2)}%" aria-label="${i+1}. ${esc(w.title)}">${i+1}</button>`;
+  }).join("");
+  return `<div class="map"><div class="map-inner">
+    <svg viewBox="0 0 360 440" role="img" aria-label="Park map with rough areas for each work">
+      <path class="m-lawn" d="M40 14 C 120 6, 250 10, 322 18 C 350 22, 354 60, 350 120 C 346 220, 356 330, 346 400 C 340 428, 300 432, 200 430 C 110 428, 40 434, 20 410 C 6 380, 10 280, 12 180 C 14 100, 6 30, 40 14 Z"/>
+      ${PATHS.map(d=>`<path class="m-pathedge" d="${d}"/>`).join("")}
+      ${PATHS.map(d=>`<path class="m-path" d="${d}"/>`).join("")}
+      <path class="m-water" d="M146 198 C 156 174, 208 170, 240 184 C 264 195, 264 236, 238 250 C 208 266, 164 262, 150 244 C 138 232, 138 214, 146 198 Z"/>
+      ${trees()}
+      <text class="m-water-text" x="204" y="222" text-anchor="middle">pond</text>
+      <text class="m-text" x="180" y="30" text-anchor="middle">N GATE</text>
+      <text class="m-text" x="346" y="212" text-anchor="end">E GATE</text>
+      <text class="m-text" x="22" y="322">W GATE</text>
+      ${zones}
+    </svg>${pins}</div>
+    <div class="tip" id="tip" hidden></div>
+  </div>`;
+}
+function latestNote(w){
+  const n = (state.mine[w.id]||[])[0] || w.notes[0];
+  if(!n) return "No notes yet.";
+  return n.length>120 ? n.slice(0,117).trim()+"…" : n;
+}
+
+/* ---------- drawings ---------- */
+function wobble(pts, seed){
+  const r = rng(seed), out = [];
+  for(let i=0;i<pts.length-1;i++){
+    const [x1,y1]=pts[i],[x2,y2]=pts[i+1];
+    for(let k=0;k<8;k++){ const t=k/8; out.push([x1+(x2-x1)*t+(r()-.5)*4, y1+(y2-y1)*t+(r()-.5)*4]); }
+  }
+  out.push(pts[pts.length-1]); return out;
+}
+const pathD = pts => pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+const TOOLS = [["pen","Pen"],["tree","Tree"],["flower","Flower"],["sculpture","Statue"],["bench","Bench"],["lamp","Lamp"]];
+function doodle(t,x,y){
+  if(t==="tree") return `<circle class="ink" cx="${x}" cy="${y-7}" r="9"/><path class="ink" d="M${x-3} ${y-9} q3 -3 6 0 M${x} ${y+2} L${x} ${y+14}"/>`;
+  if(t==="flower"){
+    let p=""; for(let k=0;k<5;k++){ const a=k*1.2566-1.5708; p+=`<circle class="ink" cx="${(x+Math.cos(a)*5).toFixed(1)}" cy="${(y-6+Math.sin(a)*5).toFixed(1)}" r="3"/>`; }
+    return p+`<path class="ink" d="M${x} ${y-1} L${x} ${y+14} M${x} ${y+8} q5 -5 8 -1"/>`;
+  }
+  if(t==="sculpture") return `<circle class="ink" cx="${x}" cy="${y-13}" r="3.2"/><path class="ink" d="M${x} ${y-10} L${x} ${y+3} M${x-6} ${y-5} L${x} ${y-8} L${x+6} ${y-3} M${x} ${y+3} L${x-4} ${y+5} M${x} ${y+3} L${x+4} ${y+5}"/><rect class="ink" x="${x-8}" y="${y+5}" width="16" height="8"/>`;
+  if(t==="bench") return `<path class="ink" d="M${x-13} ${y} L${x+13} ${y} M${x-13} ${y-7} L${x+13} ${y-7} M${x-10} ${y-7} L${x-10} ${y+7} M${x+10} ${y-7} L${x+10} ${y+7}"/>`;
+  if(t==="lamp") return `<path class="ink" d="M${x} ${y+13} L${x} ${y-9} M${x-4} ${y+13} L${x+4} ${y+13}"/><circle class="ink" cx="${x}" cy="${y-13}" r="4"/>`;
+  return "";
+}
+const hand = (t,x,y,a) => t ? `<text class="hand" x="${x}" y="${y}" text-anchor="${a||"middle"}">${esc(t)}</text>` : "";
+function sampleSketch(d, seed){
+  const pts=d.p, [sx,sy]=pts[0], [ex,ey]=pts[pts.length-1];
+  const marks=d.rich?(d.m||[]).map(([t,x,y,w])=>doodle(t,x,y)+hand(w,x,y+30)).join(""):"";
+  return `<svg viewBox="0 0 300 300" aria-hidden="true">
+    <path class="ink" d="${pathD(wobble(pts,seed))}"/>
+    <path class="ink" d="M${sx-6} ${sy-6} L${sx+6} ${sy+6} M${sx+6} ${sy-6} L${sx-6} ${sy+6}"/>
+    <circle class="ink" cx="${ex}" cy="${ey}" r="9"/>
+    ${marks}${d.rich&&d.s?hand(...d.s):""}${d.rich&&d.e?hand(...d.e):""}</svg>`;
+}
+function userSketch(dr){
+  const strokes = Array.isArray(dr) ? dr : (dr.s||[]), marks = Array.isArray(dr) ? [] : (dr.m||[]);
+  return `<svg viewBox="0 0 300 300" aria-hidden="true">${strokes.map(s=>`<path class="ink" d="${pathD(s)}"/>`).join("")}${marks.map(([t,x,y])=>doodle(t,x,y)).join("")}</svg>`;
+}
+
+/* ---------- views ---------- */
+function home(){
+  app.innerHTML = `<section class="view">
+    <div class="intro">
+      <span class="label">Exhibition guide</span>
+      <h1>Going for a Walk?</h1>
+      <p>Tap a circle. Read what others left. Decide where to walk.</p>
+    </div>
+    ${parkMap()}
+    <div class="foot">
+      <div class="row"><button class="btn primary" id="finish">My visit is finished</button></div>
+      <p class="tiny">Prototype with sample notes and drawings. What you add stays on this device.</p>
+    </div>
+  </section>`;
+  const tip = document.getElementById("tip"), mapEl = app.querySelector(".map");
+  function showTip(g){
+    const w = WORKS.find(x=>x.id===g.dataset.id);
+    tip.innerHTML = `<div class="tn">${esc(latestNote(w))}</div>`;
+    tip.hidden = false;
+    const d = g.getBoundingClientRect(), m = mapEl.getBoundingClientRect();
+    let left = d.left-m.left+d.width/2-tip.offsetWidth/2;
+    left = Math.max(4, Math.min(left, m.width-tip.offsetWidth-4));
+    let top = d.top-m.top-tip.offsetHeight-10;
+    if(top<4) top = d.bottom-m.top+10;
+    tip.style.left = left+"px"; tip.style.top = top+"px";
+  }
+  app.querySelectorAll(".pin").forEach(g=>{
+    g.addEventListener("mouseenter",()=>showTip(g));
+    g.addEventListener("focus",()=>showTip(g));
+    g.addEventListener("mouseleave",()=>{tip.hidden=true;});
+    g.addEventListener("blur",()=>{tip.hidden=true;});
+    g.addEventListener("click",()=>work(g.dataset.id));
+    g.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); work(g.dataset.id);} });
+  });
+  document.getElementById("finish").onclick = finish;
+  window.scrollTo(0,0);
+}
+
+function work(id){
+  const w = WORKS.find(x=>x.id===id), idx = WORKS.indexOf(w);
+  const myWays = state.draw[id]||[], myNotes = state.mine[id]||[];
+  const ways = [
+    ...myWays.map(s=>`<div class="sketch">${userSketch(s)}<span class="meta">you</span></div>`),
+    ...(WAYS[w.id]||[]).map((d,i)=>`<div class="sketch">${sampleSketch(d, idx*10+i+1)}<span class="meta s">sample</span></div>`)
+  ].join("");
+  const notes = [
+    ...myNotes.map(t=>`<div class="slip"><p>${esc(t)}</p><span class="meta">you</span></div>`),
+    ...w.notes.map(t=>`<div class="slip"><p>${esc(t)}</p><span class="meta s">sample</span></div>`)
+  ].join("");
+  const seen = !!state.seen[id];
+  app.innerHTML = `<section class="view">
+    <div class="bar"><button class="back" id="back">← map</button></div>
+    <div class="head">
+      <span class="label">No. ${idx+1}</span>
+      <h2>${esc(w.title)}${w.year?", "+esc(w.year):""}</h2>
+      <div class="tomb"><span class="artist">${esc(w.artist)}</span>${w.medium?`<span>${esc(w.medium)}</span>`:'<span class="tbc">Medium and duration to be confirmed</span>'}</div>
+      <span class="where">Rough area: ${esc(w.area)}</span>
+    </div>
+    <div class="block">
+      <span class="label">Ways here, drawn by others</span>
+      ${ways ? `<div class="sketches">${ways}</div>` : '<p class="empty">No one has drawn a way here yet.</p>'}
+    </div>
+    <div class="block">
+      <span class="label">What others noticed</span>
+      ${notes || '<p class="empty">No notes yet. You may be the first to go.</p>'}
+    </div>
+    ${seen ? leavePanel(w) : `<div class="row">
+      <button class="btn primary" id="go">${state.going[id]?"I've found it":"I'll go and look"}</button>
+      <button class="btn" id="skip">Not this one</button></div>
+    <p class="note">Texts about the work can be opened once you reach it.</p>`}
+  </section>`;
+  document.getElementById("back").onclick = home;
+  if(!seen){
+    document.getElementById("go").onclick = ()=>{ if(state.going[id]) state.seen[id]=true; else state.going[id]=true; save(); work(id); };
+    document.getElementById("skip").onclick = home;
+  } else bindPanel(id);
+  window.scrollTo(0,0);
+}
+
+function leavePanel(w){
+  return `<div class="panel">
+    <div class="block">
+      <span class="label">Draw how you got here</span>
+      <p class="note">Draw your route, then add a tree, a statue or anything else that helped you find the way.</p>
+      <div class="tools" role="group" aria-label="Drawing tools">${TOOLS.map(([t,l],i)=>`<button class="tool" data-tool="${t}" aria-pressed="${i===0}">${t==="pen"?`<svg viewBox="0 0 20 20" aria-hidden="true"><path class="ink" d="M3 16 C 7 12, 10 13, 17 4"/></svg>`:`<svg viewBox="-16 -19 32 34" aria-hidden="true">${doodle(t,0,0)}</svg>`}${l}</button>`).join("")}</div>
+      <svg class="pad" id="pad" viewBox="0 0 300 300" aria-label="Drawing area"></svg>
+      <div class="row"><button class="btn small" id="clear">Clear</button></div>
+    </div>
+    <div class="block">
+      <label class="label" for="note-${w.id}">Leave a note</label>
+      <textarea id="note-${w.id}" placeholder="What did you see, and what happened on the way?"></textarea>
+    </div>
+    <div class="row"><button class="btn primary" id="leave">Leave for the next visitor</button></div>
+    ${w.caption ? `<details class="cap"><summary>About the work</summary>${paras(w.caption)}</details>` : ""}
+    ${w.note ? `<details class="cap"><summary>Curator's note</summary>${paras(w.note)}</details>` : ""}
+  </div>`;
+}
+
+function bindPanel(id){
+  const pad = document.getElementById("pad"); let strokes = [], marks = [], cur = null, tool = "pen";
+  const pt = e => { const r = pad.getBoundingClientRect(); return [(e.clientX-r.left)/r.width*300, (e.clientY-r.top)/r.height*300]; };
+  const render = () => { pad.innerHTML = strokes.map(s=>`<path class="ink" d="${pathD(s)}"/>`).join("") + marks.map(([t,x,y])=>doodle(t,x,y)).join(""); };
+  app.querySelectorAll(".tool").forEach(b=>b.onclick=()=>{ tool=b.dataset.tool; app.querySelectorAll(".tool").forEach(x=>x.setAttribute("aria-pressed", String(x===b))); });
+  pad.addEventListener("pointerdown",e=>{
+    const p = pt(e);
+    if(tool!=="pen"){ marks.push([tool, Math.round(p[0]), Math.round(p[1])]); render(); return; }
+    pad.setPointerCapture(e.pointerId); cur=[p]; strokes.push(cur); render();
+  });
+  pad.addEventListener("pointermove",e=>{ if(!cur) return; const p=pt(e), l=cur[cur.length-1];
+    if(Math.hypot(p[0]-l[0],p[1]-l[1])>2){ cur.push(p); render(); } });
+  const end = ()=>{ cur=null; };
+  pad.addEventListener("pointerup",end); pad.addEventListener("pointercancel",end);
+  document.getElementById("clear").onclick = ()=>{ strokes=[]; marks=[]; render(); };
+  document.getElementById("leave").onclick = ()=>{
+    const v = document.getElementById("note-"+id).value.trim();
+    const drawn = strokes.filter(s=>s.length>1).map(s=>s.map(([x,y])=>[Math.round(x),Math.round(y)]));
+    if(drawn.length || marks.length) (state.draw[id]=state.draw[id]||[]).unshift({s:drawn, m:marks});
+    if(v) (state.mine[id]=state.mine[id]||[]).unshift(v);
+    save(); work(id);
+  };
+}
+
+function finish(){
+  const qs = QUESTIONS.map((item,i)=>`<div class="q">
+      <label class="ql" for="q${i}">${esc(item.q)}</label>
+      ${item.chips ? `<div class="chips" role="radiogroup">${item.chips.map((c,j)=>`
+        <input type="radio" name="choice" id="c${j}" value="${esc(c)}" ${state.choice===c?"checked":""}><label for="c${j}">${esc(c)}</label>`).join("")}</div>` : ""}
+      <textarea id="q${i}" rows="2" ${item.chips?'placeholder="Why? (optional)"':""}>${esc(state.answers[i]||"")}</textarea>
+    </div>`).join("");
+  app.innerHTML = `<section class="view">
+    <div class="bar"><button class="back" id="back">← map</button></div>
+    <div class="head"><span class="label">Before you go</span><h2>Four short questions</h2><p class="note">All optional.</p></div>
+    ${qs}
+    <div class="row"><button class="btn primary" id="send">Done</button><button class="btn" id="skipq">Skip</button></div>
+  </section>`;
+  document.getElementById("back").onclick = home;
+  QUESTIONS.forEach((_,i)=>document.getElementById("q"+i).oninput = e=>{ state.answers[i]=e.target.value; save(); });
+  app.querySelectorAll('input[name="choice"]').forEach(r=>r.onchange=()=>{ state.choice=r.value; save(); });
+  document.getElementById("send").onclick = thanks;
+  document.getElementById("skipq").onclick = thanks;
+  window.scrollTo(0,0);
+}
+
+function thanks(){
+  app.innerHTML = `<section class="view">
+    <span class="label">Visit finished</span>
+    <h2>Thank you for walking.</h2>
+    <p class="note">The way home is part of the walk too.</p>
+    <div class="row"><button class="btn" id="index">Back to the map</button><button class="btn" id="again">Start a new visit</button></div>
+  </section>`;
+  document.getElementById("index").onclick = home;
+  document.getElementById("again").onclick = ()=>{ state = blank(); save(); home(); };
+  window.scrollTo(0,0);
+}
+
+home();
+</script>
+
+</body>
+</html>
